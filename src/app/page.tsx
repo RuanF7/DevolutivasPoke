@@ -1,8 +1,9 @@
+import Layout from './components/layout/layout';
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div>Hello world!</div>
-      <div>Hi</div>
+    <main>
+      <Layout />
     </main>
   );
 }
