@@ -2,17 +2,12 @@ import Image from 'next/image';
 
 const Header = () => {
   return (
-    <header className="w-full h-52 absolute">
-      <Image
-        src="/header.jpg"
-        alt="header"
-        layout="fill"
-        objectFit="cover"
-        objectPosition="0% 13%"
-        priority
-        className="w-full"
-      />
-    </header>
+    <nav className="navbar flex justify-between items-center p-4 md:p-6 mb-8 bg-gray-900 text-white">
+      <div className="flex justify-center items-center">
+        <Image src="/pokeball.png" alt="Pokéball" width={30} height={30} />
+        <h1 className="ml-4">Poke Devolutivas</h1>
+      </div>
+    </nav>
   );
 };
 
