@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import Layout from './components/layout/Layout';
+import LayoutLoginPage from './components/layout/layoutLoginPage/LayoutLoginPage';
 
 export default function Home() {
   return (
     <main>
-      <Layout />
+      <LayoutLoginPage />
       <Link href="/loginPage">LoginPage</Link>
     </main>
   );
