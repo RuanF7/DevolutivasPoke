@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
 import Head from 'next/head';
-import LoginPageForm from '../forms/loginPageForm/LoginPageForm';
 
 const Layout = () => {
   return (
@@ -24,9 +23,6 @@ const Layout = () => {
             priority
             className="z-0"
           />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <LoginPageForm />
-          </div>
         </div>
       </div>
       <Footer />
