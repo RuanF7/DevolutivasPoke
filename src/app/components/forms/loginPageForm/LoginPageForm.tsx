@@ -21,7 +21,10 @@ const LoginPageForm: React.FC<LoginPageFormProps> = ({
         <h1 className="text-center text-white font-light text-4xl bg-gray-900 rounded-t-xl m-0 py-4">
           Entrar
         </h1>
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+        >
           <input
             type="email"
             placeholder="Email"
@@ -36,7 +39,9 @@ const LoginPageForm: React.FC<LoginPageFormProps> = ({
             value={formData.senha}
             onChange={handleChange}
           />
-          <button type="submit">Entrar</button>
+          <button type="submit" style={{ width: '100%', marginTop: 'auto' }}>
+            Entrar
+          </button>
         </form>
       </aside>
     </div>
