@@ -1,16 +1,42 @@
+'use client';
 import React from 'react';
 
-const LoginPageForm: React.FC = () => {
+interface LoginPageFormProps {
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent) => void;
+  formData: {
+    email: string;
+    senha: string;
+  };
+}
+
+const LoginPageForm: React.FC<LoginPageFormProps> = ({
+  handleChange,
+  handleSubmit,
+  formData
+}) => {
   return (
-    <div className="w-64 h-screen flex justify-center items-center ">
+    <div className="w-64 h-screen flex justify-center items-center">
       <aside className="bg-white w-full max-w-md rounded-xl bg-opacity-20 shadow-lg shadow-gray-900">
         <h1 className="text-center text-white font-light text-4xl bg-gray-900 rounded-t-xl m-0 py-4">
           Entrar
         </h1>
-        <form>
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
-          <button>Entrar</button>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            name="senha"
+            value={formData.senha}
+            onChange={handleChange}
+          />
+          <button type="submit">Entrar</button>
         </form>
       </aside>
     </div>
