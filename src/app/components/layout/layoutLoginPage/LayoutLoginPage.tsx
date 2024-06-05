@@ -1,11 +1,11 @@
+import React from 'react';
+import Head from 'next/head';
 import Image from 'next/image';
 import Header from '../../header/Header';
 import Footer from '../../footer/Footer';
-import Head from 'next/head';
-import Layout from '../Layout';
-import LoginPageForm from '../../forms/loginPageForm/LoginPageForm';
+import LoginPageLogic from '../../forms/loginPageForm/LoginPageFormLogic';
 
-const LayoutLoginPage = () => {
+const LayoutLoginPage: React.FC = () => {
   return (
     <div>
       <Head>
@@ -26,7 +26,7 @@ const LayoutLoginPage = () => {
             className="z-0"
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <LoginPageForm />
+            <LoginPageLogic />
           </div>
         </div>
       </div>
