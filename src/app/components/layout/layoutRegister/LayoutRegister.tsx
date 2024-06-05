@@ -1,4 +1,5 @@
-import RegisterForm from '../../forms/registerForm/registerForm';
+'use client';
+import RegisterLogic from '../../forms/registerForm/RegisterFormLogic';
 import Layout from '../Layout';
 
 const LayoutRegister = () => {
@@ -6,7 +7,7 @@ const LayoutRegister = () => {
     <>
       <Layout />
       <div className="absolute inset-0 flex items-center justify-center">
-        <RegisterForm />
+        <RegisterLogic />
       </div>
     </>
   );
