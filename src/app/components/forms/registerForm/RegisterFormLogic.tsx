@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RegisterForm from './RegisterForm';
+import { useRouter } from 'next/router';
 
 const RegisterLogic: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const RegisterLogic: React.FC = () => {
     tipo: '',
     isProfessor: false
   });
+  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -55,6 +57,8 @@ const RegisterLogic: React.FC = () => {
       const result = await response.json();
       if (response.ok) {
         console.log('User created', result);
+        localStorage.setItem('token', result.token);
+        router.push('/studentPage/studentCourseRegistration');
       } else {
         console.error('Error:', result.error);
       }
