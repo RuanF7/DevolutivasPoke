@@ -1,12 +1,15 @@
 'use client';
 import React, { useState } from 'react';
 import LoginPageForm from './LoginPageForm';
+import { useRouter } from 'next/navigation';
 
 const LoginPageLogic: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
     senha: ''
   });
+
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,7 +33,8 @@ const LoginPageLogic: React.FC = () => {
       const result = await response.json();
       if (response.ok) {
         console.log('User logged in', result);
-        // Redirecionar para a próxima página após o login bem-sucedido
+        localStorage.setItem('token', result.token);
+        router.push('/studentPage/studentArea');
       } else {
         console.error('Error:', result.error);
       }
