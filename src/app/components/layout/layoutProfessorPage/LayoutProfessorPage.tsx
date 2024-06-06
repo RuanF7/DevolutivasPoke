@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Header from '../../header/Header';
 import Footer from '../../footer/Footer';
-import ProfessorArea from '@/app/professorPage/professorArea/professorArea';
+import ProfessorArea from '@/app/professorPage/professorArea/ProfessorArea';
 
 const LayoutProfessorPage: React.FC = () => {
   return (
