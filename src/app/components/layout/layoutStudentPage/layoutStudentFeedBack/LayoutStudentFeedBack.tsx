@@ -3,9 +3,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Header from '@/app/components/header/Header';
 import Footer from '@/app/components/footer/Footer';
-import StudentTest from '@/app/studentPage/studentTest/StudentTest';
+import StudentFeedback from '@/app/studentPage/studentFeedback/StudentFeedBack';
 
-const LayoutStudentTest: React.FC = () => {
+const LayoutStudentFeedbackPage: React.FC = () => {
   return (
     <div>
       <Head>
@@ -26,7 +26,7 @@ const LayoutStudentTest: React.FC = () => {
             className="z-0"
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <StudentTest />
+            <StudentFeedback />
           </div>
         </div>
       </div>
@@ -35,4 +35,4 @@ const LayoutStudentTest: React.FC = () => {
   );
 };
 
-export default LayoutStudentTest;
+export default LayoutStudentFeedbackPage;
