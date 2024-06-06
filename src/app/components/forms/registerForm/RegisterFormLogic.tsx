@@ -1,6 +1,7 @@
+'use client';
 import React, { useState } from 'react';
 import RegisterForm from './RegisterForm';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const RegisterLogic: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -58,7 +59,12 @@ const RegisterLogic: React.FC = () => {
       if (response.ok) {
         console.log('User created', result);
         localStorage.setItem('token', result.token);
-        router.push('/studentPage/studentCourseRegistration');
+
+        if (result.isProfessor) {
+          router.push('/professorPage/professorArea');
+        } else {
+          router.push('/studentPage/studentArea');
+        }
       } else {
         console.error('Error:', result.error);
       }
