@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 const ProfessorBackpack: React.FC = () => {
@@ -7,13 +7,17 @@ const ProfessorBackpack: React.FC = () => {
   const [professorId, setProfessorId] = useState(0);
   const [isProfessor, setIsProfessor] = useState(false);
 
+  useEffect(() => {
+    getProfessor();
+  }, []);
+
   const getProfessor = () => {
     const id = localStorage.getItem('userId');
     const userIsProfessor = localStorage.getItem('isProfessor');
     if (!id || !userIsProfessor) {
       return;
     }
-    setIsProfessor(Boolean(userIsProfessor));
+    setIsProfessor(userIsProfessor === 'true');
     setProfessorId(Number(id));
   };
 
@@ -25,7 +29,20 @@ const ProfessorBackpack: React.FC = () => {
     e.preventDefault();
     getProfessor();
 
+    if (!professorId || !isProfessor) {
+      console.error('Professor ID or status not set');
+      return;
+    }
+
+    if (!pokemonName) {
+      console.error('Pokemon name is required');
+      return;
+    }
+
     try {
+      const body = { professorId, pokemonName };
+      console.log('Submitting:', body);
+
       const response = await fetch(
         'http://localhost:3000/api/professor/add-pokemon',
         {
@@ -33,10 +50,11 @@ const ProfessorBackpack: React.FC = () => {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ professorId, pokemonName })
+          body: JSON.stringify(body)
         }
       );
       const result = await response.json();
+      console.log(response);
       if (!response.ok) {
         throw new Error(result.message);
       }
