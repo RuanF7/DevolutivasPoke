@@ -2,6 +2,12 @@
 import React, { useState } from 'react';
 import RegisterForm from './RegisterForm';
 import { useRouter } from 'next/navigation';
+import jwt from 'jsonwebtoken';
+
+interface Token extends jwt.JwtPayload {
+  userId: number;
+  isProfessor: boolean;
+}
 
 const RegisterLogic: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -17,14 +23,29 @@ const RegisterLogic: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    const isProfessor = value === 'true';
-    const tipo = isProfessor ? '' : formData.tipo;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
-      isProfessor: isProfessor,
-      tipo: tipo
+      [name]: value
     }));
+  };
+
+  const handleToken = (token: string): boolean => {
+    try {
+      console.log('Token:', token);
+      const decodedToken = jwt.verify(token, 'your_jwt_secret') as Token;
+      console.log('Decoded token:', decodedToken);
+
+      const userId = (decodedToken as Token).userId;
+      const isProfessor = (decodedToken as Token).isProfessor;
+
+      localStorage.setItem('userId', userId.toString());
+      localStorage.setItem('isProfessor', isProfessor.toString());
+
+      return isProfessor;
+    } catch (error) {
+      console.error('Error:', error);
+      return false;
+    }
   };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -56,11 +77,13 @@ const RegisterLogic: React.FC = () => {
       });
 
       const result = await response.json();
+      console.log('API Response:', result);
       if (response.ok) {
         console.log('User created', result);
         localStorage.setItem('token', result.token);
 
-        if (result.isProfessor) {
+        const isProfessor = handleToken(result.token);
+        if (isProfessor) {
           router.push('/professorPage/professorArea');
         } else {
           router.push('/studentPage/studentArea');
