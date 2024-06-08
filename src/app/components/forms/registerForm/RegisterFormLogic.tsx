@@ -82,6 +82,8 @@ const RegisterLogic: React.FC = () => {
         console.log('User created', result);
         localStorage.setItem('token', result.token);
 
+        localStorage.setItem('tipo', formData.tipo);
+
         const isProfessor = handleToken(result.token);
         if (isProfessor) {
           router.push('/professorPage/professorArea');
