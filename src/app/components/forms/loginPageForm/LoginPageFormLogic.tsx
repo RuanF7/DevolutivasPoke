@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 interface Token extends jwt.JwtPayload {
   userId: number;
   isProfessor: boolean;
+  tipo: string;
 }
 
 const LoginPageLogic: React.FC = () => {
@@ -33,9 +34,11 @@ const LoginPageLogic: React.FC = () => {
 
       const userId = (decodedToken as Token).userId;
       const isProfessor = (decodedToken as Token).isProfessor;
+      const tipo = (decodedToken as Token).tipo;
 
       localStorage.setItem('userId', userId.toString());
       localStorage.setItem('isProfessor', isProfessor.toString());
+      localStorage.setItem('tipo', tipo.toString());
 
       setIsProfessor(isProfessor);
       return isProfessor;
