@@ -6,6 +6,7 @@ const StudentArea: React.FC = () => {
   const router = useRouter();
 
   const handleNavigation = (path: string) => {
+    console.log('userId:', localStorage.getItem('userId'));
     router.push(path);
   };
   return (
