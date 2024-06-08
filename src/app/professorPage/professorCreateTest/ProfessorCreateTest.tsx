@@ -1,11 +1,19 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 const ProfessorCreateTest: React.FC = () => {
   const [pokemon1, setPokemon1] = useState('');
   const [pokemon2, setPokemon2] = useState('');
   const [pokemon3, setPokemon3] = useState('');
+  const [tipo, setTipo] = useState('');
+
+  useEffect(() => {
+    const storedTipo = localStorage.getItem('tipo');
+    if (storedTipo) {
+      setTipo(storedTipo);
+    }
+  }, []);
 
   const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPokemon1(e.target.value);
@@ -31,11 +39,10 @@ const ProfessorCreateTest: React.FC = () => {
         console.error('Professor ID not found in localStorage');
         return;
       }
-      //Resolver a questão do nome da prova
       const body = {
         professorId: parseInt(professorId),
         provaData: {
-          nome: 'Nome da Prova',
+          nome: `Prova de ${tipo}`,
           pokemonNomes: [pokemon1, pokemon2, pokemon3]
         }
       };
