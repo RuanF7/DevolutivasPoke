@@ -3,7 +3,11 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 
 const StudentCourseRegistration: React.FC = () => {
+  const alunoIdFromStorage = localStorage.getItem('userId');
   const [cursoNome, setCursoNome] = useState('');
+  const [alunoId, setAlunoId] = useState<number | null>(
+    alunoIdFromStorage ? parseInt(alunoIdFromStorage) : null
+  );
 
   const handleCursoNomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCursoNome(e.target.value);
@@ -11,11 +15,12 @@ const StudentCourseRegistration: React.FC = () => {
 
   const handleMatricularClick = async () => {
     const token = localStorage.getItem('token');
+    console.log(token);
     if (!token) {
       console.error('Token não encontrado. Faça o login primeiro.');
       return;
     }
-
+    console.log('Dados da requisição:', { alunoId, cursoNome });
     try {
       const response = await fetch(
         'http://localhost:3000/api/aluno/matricular',
@@ -26,7 +31,8 @@ const StudentCourseRegistration: React.FC = () => {
             Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
-            cursoNome: cursoNome
+            alunoId,
+            cursoNome
           })
         }
       );
