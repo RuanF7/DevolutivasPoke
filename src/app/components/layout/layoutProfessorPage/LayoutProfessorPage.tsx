@@ -1,9 +1,9 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Header from '../../header/Header';
 import Footer from '../../footer/Footer';
 import ProfessorArea from '@/app/professorPage/professorArea/ProfessorArea';
+import HeaderProfessor from '../../header/HeaderProfessor';
 
 const LayoutProfessorPage: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const LayoutProfessorPage: React.FC = () => {
         <link rel="shortcut icon" href="/images/pokeball.png" />
         <title>PokeDevolutivas</title>
       </Head>
-      <Header />
+      <HeaderProfessor />
       <div className="flex items-center justify-center min-h-screen">
         <div className="relative">
           <Image

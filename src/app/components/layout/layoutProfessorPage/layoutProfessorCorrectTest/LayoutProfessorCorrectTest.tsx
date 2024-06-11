@@ -2,7 +2,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Header from '@/app/components/header/Header';
+import HeaderProfessor from '@/app/components/header/HeaderProfessor';
 import Footer from '@/app/components/footer/Footer';
 import ProfessorCorrectTest from '@/app/professorPage/professorCorrectTest/ProfessorCorrectTest';
 
@@ -13,7 +13,7 @@ const LayoutProfessorCorrectTest: React.FC = () => {
         <link rel="shortcut icon" href="/images/pokeball.png" />
         <title>PokeDevolutivas</title>
       </Head>
-      <Header />
+      <HeaderProfessor />
       <div className="flex items-center justify-center min-h-screen">
         <div className="relative">
           <Image
