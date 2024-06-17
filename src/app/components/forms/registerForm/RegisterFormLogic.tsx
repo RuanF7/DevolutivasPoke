@@ -14,8 +14,8 @@ const RegisterLogic: React.FC = () => {
     nome: '',
     email: '',
     senha: '',
-    tipo: '',
-    isProfessor: false
+    tipo: 'aluno',
+    tipoPokemon: ''
   });
   const router = useRouter();
 
@@ -50,42 +50,45 @@ const RegisterLogic: React.FC = () => {
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    const isProfessor = value === 'true';
+    // const tipo = value === 'true' ? 'professor' : 'aluno';
     setFormData((prevState) => ({
       ...prevState,
-      isProfessor: isProfessor
+      tipo: value,
+      tipoPokemon: value === 'professor' ? '' : prevState.tipoPokemon
     }));
   };
 
-  const handleTipoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTipoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      tipo: value
+      tipoPokemon: value
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/api/auth/signup', {
+      const tipoFinal =
+        formData.tipo === 'professor' ? formData.tipoPokemon : 'aluno';
+
+      const response = await fetch('http://localhost:3000/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, tipo: tipoFinal })
       });
 
       const result = await response.json();
       console.log('API Response:', result);
       if (response.ok) {
-        console.log('User created', result);
+        console.log('Usuário Criado', result);
         localStorage.setItem('token', result.token);
-
         localStorage.setItem('tipo', formData.tipo);
 
-        const isProfessor = handleToken(result.token);
-        if (isProfessor) {
+        handleToken(result.token);
+        if (formData.tipo === 'professor') {
           router.push('/professorPage/professorArea');
         } else {
           router.push('/studentPage/studentArea');

@@ -5,14 +5,14 @@ interface RegisterFormProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
   handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleTipoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleTipoChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleSubmit: (e: React.FormEvent) => void;
   formData: {
     nome: string;
     email: string;
     senha: string;
     tipo: string;
-    isProfessor: boolean;
+    tipoPokemon?: string;
   };
 }
 
@@ -56,22 +56,39 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             onChange={handleChange}
           />
           <select
-            name="isProfessor"
-            value={formData.isProfessor ? 'true' : 'false'}
+            name="tipo"
+            value={formData.tipo}
             onChange={handleSelectChange}
           >
-            <option value="false">Aluno</option>
-            <option value="true">Professor</option>
+            <option value="aluno">Aluno</option>
+            <option value="professor">Professor</option>
           </select>
-          {formData.isProfessor ? (
-            <input
-              name="tipo"
-              type="text"
-              placeholder="Tipo"
-              value={formData.tipo}
+          {formData.tipo === 'professor' && (
+            <select
+              name="tipoPokemon"
+              value={formData.tipoPokemon || ''}
               onChange={handleTipoChange}
-            />
-          ) : null}
+            >
+              <option value="fire">Fogo</option>
+              <option value="water">Agua</option>
+              <option value="grass">Grama</option>
+              <option value="electric">Elétrico</option>
+              <option value="psychic">Psíquico</option>
+              <option value="rock">Pedra</option>
+              <option value="ground">Terrestre</option>
+              <option value="flying">Voador</option>
+              <option value="normal">Normal</option>
+              <option value="fighting">Lutador</option>
+              <option value="poison">Venenoso</option>
+              <option value="bug">Inseto</option>
+              <option value="ghost">Fantasma</option>
+              <option value="ice">Gelo</option>
+              <option value="dragon">Dração</option>
+              <option value="dark">Sombrio</option>
+              <option value="steel">Aço</option>
+              <option value="fairy">Fada</option>
+            </select>
+          )}
           <button type="submit" style={{ width: '100%', marginTop: 'auto' }}>
             Cadastrar
           </button>
