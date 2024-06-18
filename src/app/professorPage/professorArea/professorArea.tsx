@@ -27,6 +27,14 @@ const ProfessorArea = () => {
           <div className="flex flex-col justify-center">
             <button
               onClick={() =>
+                handleNavigation('/professorPage/professorCreateCourse')
+              }
+              className="w-full py-2 my-2 bg-gray-800 text-white rounded hover:bg-gray-900"
+            >
+              Criar Curso
+            </button>
+            <button
+              onClick={() =>
                 handleNavigation('/professorPage/professorBackpack')
               }
               className="w-full py-2 my-2 bg-gray-800 text-white rounded hover:bg-gray-900"
