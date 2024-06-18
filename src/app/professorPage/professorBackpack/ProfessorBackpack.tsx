@@ -4,22 +4,27 @@ import Image from 'next/image';
 
 const ProfessorBackpack: React.FC = () => {
   const [pokemonName, setPokemonName] = useState('');
-  const [professorId, setProfessorId] = useState(0);
+  const [professorId, setProfessorId] = useState<number | null>(null);
   const [isProfessor, setIsProfessor] = useState(false);
 
   useEffect(() => {
-    getProfessor();
-  }, []);
-
-  const getProfessor = () => {
     const id = localStorage.getItem('userId');
     const userIsProfessor = localStorage.getItem('isProfessor');
-    if (!id || !userIsProfessor) {
-      return;
+    if (id && userIsProfessor === 'true') {
+      setIsProfessor(true);
+      setProfessorId(Number(id));
     }
-    setIsProfessor(userIsProfessor === 'true');
-    setProfessorId(Number(id));
-  };
+  }, []);
+
+  // const getProfessor = () => {
+  //   const id = localStorage.getItem('userId');
+  //   const userIsProfessor = localStorage.getItem('isProfessor');
+  //   if (!id || !userIsProfessor) {
+  //     return;
+  //   }
+  //   setIsProfessor(userIsProfessor === 'true');
+  //   setProfessorId(Number(id));
+  // };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPokemonName(e.target.value);
@@ -27,24 +32,23 @@ const ProfessorBackpack: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    getProfessor();
 
-    if (!professorId || !isProfessor) {
-      console.error('Professor ID or status not set');
+    if (!professorId) {
+      console.error('ID do professor não encontrado!');
       return;
     }
 
     if (!pokemonName) {
-      console.error('Pokemon name is required');
+      console.error('Nome do Pokémon é obrigatório');
       return;
     }
 
     try {
       const body = { professorId, pokemonName };
-      console.log('Submitting:', body);
+      console.log('Enviando:', body);
 
       const response = await fetch(
-        'http://localhost:3000/api/professor/add-pokemon',
+        'http://localhost:3000/professor/add-pokemon',
         {
           method: 'POST',
           headers: {
@@ -58,7 +62,7 @@ const ProfessorBackpack: React.FC = () => {
       if (!response.ok) {
         throw new Error(result.message);
       }
-      console.log('Pokemon added to backpack', result);
+      console.log('Pokemon adicionado a mochila', result);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -67,7 +71,7 @@ const ProfessorBackpack: React.FC = () => {
   return !isProfessor ? (
     <div className="w-64 h-screen flex justify-center items-center">
       <h1 className="text-2xl font-bold text-gray-800">
-        You are not a professor
+        Você não é um professor!
       </h1>
     </div>
   ) : (
@@ -89,7 +93,7 @@ const ProfessorBackpack: React.FC = () => {
           <form className="flex flex-col w-full mb-4" onSubmit={handleSubmit}>
             <input
               type="text"
-              placeholder="Add Pokemon"
+              placeholder="Adicionar Pokemon"
               className="w-full py-2 px-3 mb-3 bg-gray-100 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
               value={pokemonName}
               onChange={handleInputChange}
