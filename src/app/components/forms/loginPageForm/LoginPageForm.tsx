@@ -39,7 +39,18 @@ const LoginPageForm: React.FC<LoginPageFormProps> = ({
             value={formData.senha}
             onChange={handleChange}
           />
-          <button type="submit" style={{ width: '100%', marginTop: 'auto' }}>
+          <button
+            type="submit"
+            style={{
+              width: '100%',
+              marginTop: 'auto',
+              borderBottom: '2px solid black',
+              borderRadius: '0.5rem',
+              padding: '0.5rem 1rem',
+              display: 'block',
+              textAlign: 'center'
+            }}
+          >
             Entrar
           </button>
         </form>

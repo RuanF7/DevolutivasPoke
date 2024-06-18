@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken';
 
 interface Token extends jwt.JwtPayload {
   userId: number;
-  isProfessor: boolean;
   tipo: string;
 }
 
@@ -15,7 +14,6 @@ const LoginPageLogic: React.FC = () => {
     email: '',
     senha: ''
   });
-  const [isProfessor, setIsProfessor] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,25 +24,22 @@ const LoginPageLogic: React.FC = () => {
     }));
   };
 
-  const handleToken = (token: string): boolean => {
+  const handleToken = (token: string): string => {
     try {
       console.log('Token:', token);
       const decodedToken = jwt.verify(token, 'your_jwt_secret') as Token;
       console.log('Decoded token:', decodedToken);
 
       const userId = (decodedToken as Token).userId;
-      const isProfessor = (decodedToken as Token).isProfessor;
       const tipo = (decodedToken as Token).tipo;
 
       localStorage.setItem('userId', userId.toString());
-      localStorage.setItem('isProfessor', isProfessor.toString());
-      localStorage.setItem('tipo', tipo.toString());
+      localStorage.setItem('tipo', tipo);
 
-      setIsProfessor(isProfessor);
-      return isProfessor;
+      return tipo;
     } catch (error) {
-      console.error('Error:', error);
-      return false;
+      console.error('Erro ao decodificar token:', error);
+      return '';
     }
   };
 
@@ -52,7 +47,7 @@ const LoginPageLogic: React.FC = () => {
     e.preventDefault();
 
     if (!formData.email || !formData.senha) {
-      throw new Error('Email and password are required');
+      throw new Error('Email e senha são obrigatórios!');
     }
 
     try {
@@ -65,17 +60,19 @@ const LoginPageLogic: React.FC = () => {
       });
 
       const result = await response.json();
+      console.log('Result:', result);
       if (!response.ok) {
         throw new Error(result.message);
       }
       const isProfessor = handleToken(result.token);
+      console.log('Is Professor:', isProfessor);
       if (isProfessor) {
         router.push('/professorPage/professorArea');
       } else {
         router.push('/studentPage/studentArea');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Erro ao fazer login:', error);
     }
   };
 
