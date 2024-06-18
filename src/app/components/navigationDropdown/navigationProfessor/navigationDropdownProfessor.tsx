@@ -32,6 +32,12 @@ const NavButtonProfessor = () => {
           </Link>
           <Link
             className="mr-4 hidden sm:block"
+            href="/professorPage/professorCreateCourse"
+          >
+            <button className="w-full">Criar Curso</button>
+          </Link>
+          <Link
+            className="mr-4 hidden sm:block"
             href="/professorPage/professorBackpack"
           >
             <button className="w-full">Cadastrar Pokemon</button>
@@ -67,6 +73,14 @@ const NavButtonProfessor = () => {
                 href="/professorPage/professorArea"
               >
                 <button className="w-full">Area do Professor</button>
+              </Link>
+            </div>
+            <div className="mb-16 mt-16">
+              <Link
+                className={`mr-4 ${isOpen && !isClosed ? '' : 'hidden sm:block'}`}
+                href="/professorPage/professorCreateCourse"
+              >
+                <button className="w-full">Criar Curso</button>
               </Link>
             </div>
             <div className="mb-16">
