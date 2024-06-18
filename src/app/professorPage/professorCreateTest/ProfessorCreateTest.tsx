@@ -48,16 +48,13 @@ const ProfessorCreateTest: React.FC = () => {
       };
       console.log('Submitting:', body);
 
-      const response = await fetch(
-        'http://localhost:3000/api/prova/create-prova',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        }
-      );
+      const response = await fetch('http://localhost:3000/prova/create-prova', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
       console.log(response);
       const result = await response.json();
       console.log(response);
