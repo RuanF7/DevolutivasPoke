@@ -3,67 +3,109 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 const ProfessorCreateTest: React.FC = () => {
-  const [pokemon1, setPokemon1] = useState('');
-  const [pokemon2, setPokemon2] = useState('');
-  const [pokemon3, setPokemon3] = useState('');
-  const [tipo, setTipo] = useState('');
+  const [prova, setProva] = useState('');
+  const [professorId, setProfessorId] = useState<number | null>(null);
+  const [cursoId, setCursoId] = useState<number | null>(null);
+  const [provaId, setProvaId] = useState<number | null>(null);
+  const [questoes, setQuestoes] = useState<string[]>([]);
+  const [pokemon, setPokemon] = useState<string>('');
 
   useEffect(() => {
     const storedTipo = localStorage.getItem('tipo');
+    const storedProfessorId = localStorage.getItem('userId');
     if (storedTipo) {
-      setTipo(storedTipo);
+      setProva(`Prova de ${storedTipo}`);
+    }
+    if (storedProfessorId) {
+      setProfessorId(parseInt(storedProfessorId));
     }
   }, []);
 
-  const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPokemon1(e.target.value);
-  };
-  const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPokemon2(e.target.value);
-  };
-  const handleInputChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPokemon3(e.target.value);
+  useEffect(() => {
+    const fetchCursoId = async () => {
+      try {
+        if (!professorId) return;
+
+        const response = await fetch(
+          `http://localhost:3000/professor/curso/${professorId}`
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Erro ao buscar cursoId');
+        }
+
+        if (!data.id) {
+          throw new Error('CursoId não encontrado na resposta');
+        }
+
+        setCursoId(data.id);
+      } catch (error) {
+        console.error('Erro ao buscar cursoId:', error);
+      }
+    };
+
+    fetchCursoId();
+  }, [professorId]);
+
+  const handleProvaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setProva(e.target.value);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePokemonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPokemon(e.target.value.trim());
+  };
+
+  const handleSubmitProva = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const body = {
+        professorId: professorId!,
+        nome: prova,
+        cursoId: cursoId!
+      };
+
+      console.log('Enviando prova:', body);
+
+      const response = await fetch(
+        'http://localhost:3000/professor/criar-prova',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }
+      );
+
+      const result = await response.json();
+      console.log('Resposta da criação da prova:', result);
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Erro ao criar prova');
+      }
+
+      setProvaId(result.id);
+      console.log(
+        `Prova criada com sucesso! ID: ${result.id} - Nome: ${result.nome} - CursoId: ${result.cursoId}`
+      );
+      console.log(provaId);
+    } catch (error) {
+      console.error('Erro ao criar prova:', error);
+    }
+  };
+
+  const handleSubmitQuestao = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!pokemon1 || !pokemon2 || !pokemon3) {
-      console.error('All pokemon are required');
+    if (!pokemon) {
+      console.error('Digite o nome de um Pokémon.');
       return;
     }
 
-    try {
-      const professorId = localStorage.getItem('userId');
-      if (!professorId) {
-        console.error('Professor ID not found in localStorage');
-        return;
-      }
-      const body = {
-        professorId: parseInt(professorId),
-        provaData: {
-          nome: `Prova de ${tipo}`,
-          pokemonNomes: [pokemon1, pokemon2, pokemon3]
-        }
-      };
-      console.log('Submitting:', body);
+    setQuestoes([...questoes, pokemon]);
 
-      const response = await fetch('http://localhost:3000/prova/create-prova', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      });
-      console.log(response);
-      const result = await response.json();
-      console.log(response);
-      if (!response.ok) {
-        throw new Error(result.message);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    setPokemon('');
   };
 
   return (
@@ -82,34 +124,60 @@ const ProfessorCreateTest: React.FC = () => {
           </div>
         </div>
         <div className="w-2/3 flex flex-col items-center">
-          <form className="flex flex-col w-full mb-4" onSubmit={handleSubmit}>
-            <div className="flex flex-col w-full mb-4">
-              <input
-                type="text"
-                placeholder="Pokémon 1"
-                className="w-full py-2 px-3 mb-3 bg-gray-100 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                value={pokemon1}
-                onChange={handleInputChange1}
-              />
-              <input
-                type="text"
-                placeholder="Pokémon 2"
-                className="w-full py-2 px-3 mb-3 bg-gray-100 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                value={pokemon2}
-                onChange={handleInputChange2}
-              />
-              <input
-                type="text"
-                placeholder="Pokémon 3"
-                className="w-full py-2 px-3 mb-3 bg-gray-100 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                value={pokemon3}
-                onChange={handleInputChange3}
-              />
-            </div>
+          <form
+            className="flex flex-col w-full mb-4"
+            onSubmit={handleSubmitProva}
+          >
+            <select value={prova} onChange={handleProvaChange}>
+              <option value="">Selecione uma Prova</option>
+              <option value="fire">Prova de Fogo</option>
+              <option value="water">Prova de Água</option>
+              <option value="grass">Prova de Grama</option>
+              <option value="electric">Prova de Elétrico</option>
+              <option value="psychic">Prova de Psíquico</option>
+              <option value="rock">Prova de Pedra</option>
+              <option value="ground">Prova de Terrestre</option>
+              <option value="flying">Prova de Voador</option>
+              <option value="normal">Prova de Normal</option>
+              <option value="fighting">Prova de Lutador</option>
+              <option value="poison">Prova de Venenoso</option>
+              <option value="bug">Prova de Inseto</option>
+              <option value="ghost">Prova de Fantasma</option>
+              <option value="ice">Prova de Gelo</option>
+              <option value="dragon">Prova de Dragão</option>
+              <option value="dark">Prova de Sombrio</option>
+              <option value="steel">Prova de Aço</option>
+              <option value="fairy">Prova de Fada</option>
+            </select>
             <button className="w-full py-2 my-2 bg-gray-800 text-white rounded hover:bg-gray-900">
-              Enviar
+              Criar Prova
             </button>
           </form>
+
+          <form
+            className="flex flex-col w-full mb-4"
+            onSubmit={handleSubmitQuestao}
+          >
+            <input
+              type="text"
+              placeholder="Digite o nome de um Pokémon"
+              className="w-full py-2 px-3 mb-3 bg-gray-100 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+              value={pokemon}
+              onChange={handlePokemonChange}
+            />
+            <button className="w-full py-2 my-2 bg-gray-800 text-white rounded hover:bg-gray-900">
+              Adicionar Questão
+            </button>
+          </form>
+
+          <div>
+            <h3>Questões Adicionadas:</h3>
+            <ul>
+              {questoes.map((questao, index) => (
+                <li key={index}>{questao}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </aside>
     </div>
