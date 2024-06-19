@@ -14,7 +14,7 @@ const ProfessorCreateTest: React.FC = () => {
     const storedTipo = localStorage.getItem('tipo');
     const storedProfessorId = localStorage.getItem('userId');
     if (storedTipo) {
-      setProva(`Prova de ${storedTipo}`);
+      setProva(storedTipo);
     }
     if (storedProfessorId) {
       setProfessorId(parseInt(storedProfessorId));
@@ -49,7 +49,8 @@ const ProfessorCreateTest: React.FC = () => {
   }, [professorId]);
 
   const handleProvaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setProva(e.target.value);
+    const selectedProva = e.target.value;
+    setProva(selectedProva);
   };
 
   const handlePokemonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,19 +96,75 @@ const ProfessorCreateTest: React.FC = () => {
     }
   };
 
-  const handleSubmitQuestao = (e: React.FormEvent) => {
+  const fetchProvaId = async () => {
+    try {
+      console.log('FetchProvaId - professorId:', professorId);
+      console.log('FetchProvaId - prova:', prova);
+
+      const response = await fetch(
+        `http://localhost:3000/professor/prova/${professorId}/${encodeURIComponent(prova)}`
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Erro ao buscar prova');
+      }
+
+      setProvaId(data.id);
+      console.log(`Prova encontrada! ID: ${data.id} - Nome: ${data.nome}`);
+    } catch (error) {
+      console.error('Erro ao buscar prova:', error);
+    }
+  };
+
+  const handleSubmitQuestao = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!pokemon) {
-      console.error('Digite o nome de um Pokémon.');
+    if (!pokemon || !provaId || !professorId) {
+      console.error('Todos os campos devem estar preenchidos.');
       return;
     }
 
-    setQuestoes([...questoes, pokemon]);
+    try {
+      const body = {
+        provaId: provaId!,
+        pergunta: pokemon,
+        professorId: professorId!
+      };
 
-    setPokemon('');
+      console.log('handleSubmitQuestao - Enviando questão:', body);
+
+      const response = await fetch(
+        'http://localhost:3000/professor/criar-questao',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }
+      );
+
+      const result = await response.json();
+
+      console.log(
+        'handleSubmitQuestao - Resposta da criação da questão:',
+        result
+      );
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Erro ao criar questão');
+      }
+
+      console.log('Questão criada com sucesso:', result);
+
+      setQuestoes([...questoes, pokemon]);
+
+      setPokemon('');
+    } catch (error) {
+      console.error('Erro ao criar questão:', error);
+    }
   };
-
   return (
     <div className="w-64 h-screen flex justify-center items-center">
       <aside className="bg-white w-full max-w-md rounded-xl bg-opacity-5 shadow-lg shadow-gray-900 p-4 flex">
@@ -165,19 +222,13 @@ const ProfessorCreateTest: React.FC = () => {
               value={pokemon}
               onChange={handlePokemonChange}
             />
-            <button className="w-full py-2 my-2 bg-gray-800 text-white rounded hover:bg-gray-900">
+            <button
+              className="w-full py-2 my-2 bg-gray-800 text-white rounded hover:bg-gray-900"
+              onClick={fetchProvaId}
+            >
               Adicionar Questão
             </button>
           </form>
-
-          <div>
-            <h3>Questões Adicionadas:</h3>
-            <ul>
-              {questoes.map((questao, index) => (
-                <li key={index}>{questao}</li>
-              ))}
-            </ul>
-          </div>
         </div>
       </aside>
     </div>
