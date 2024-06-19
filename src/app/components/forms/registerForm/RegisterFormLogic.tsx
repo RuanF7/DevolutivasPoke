@@ -86,12 +86,13 @@ const RegisterLogic: React.FC = () => {
         console.log('Usuário Criado', result);
         localStorage.setItem('token', result.token);
         localStorage.setItem('tipo', formData.tipo);
+        localStorage.setItem('userId', result.id.toString());
 
         handleToken(result.token);
-        if (formData.tipo === 'professor') {
-          router.push('/professorPage/professorArea');
-        } else {
+        if (formData.tipo === 'aluno') {
           router.push('/studentPage/studentArea');
+        } else {
+          router.push('/professorPage/professorArea');
         }
       } else {
         console.error('Error:', result.error);
