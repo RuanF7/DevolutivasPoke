@@ -1,16 +1,30 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 const StudentCourseRegistration: React.FC = () => {
   const alunoIdFromStorage = localStorage.getItem('userId');
-  const [cursoNome, setCursoNome] = useState('');
-  const [alunoId, setAlunoId] = useState<number | null>(
-    alunoIdFromStorage ? parseInt(alunoIdFromStorage) : null
-  );
+  const [cursoId, setCursoId] = useState<number | null>(null);
+  const alunoId = alunoIdFromStorage ? parseInt(alunoIdFromStorage) : null;
 
-  const handleCursoNomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCursoNome(e.target.value);
+  const [cursos, setCursos] = useState<{ id: number; nome: string }[]>([]);
+
+  useEffect(() => {
+    const fetchCursos = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/student/cursos');
+        const data = await response.json();
+        setCursos(data);
+      } catch (error) {
+        console.error('Erro ao buscar cursos:', error);
+      }
+    };
+
+    fetchCursos();
+  }, []);
+
+  const handleCursoIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCursoId(parseInt(e.target.value));
   };
 
   const handleMatricularClick = async () => {
@@ -20,22 +34,25 @@ const StudentCourseRegistration: React.FC = () => {
       console.error('Token não encontrado. Faça o login primeiro.');
       return;
     }
-    console.log('Dados da requisição:', { alunoId, cursoNome });
+    console.log('Dados da requisição:', { alunoId, cursoId });
+
+    if (!alunoId || !cursoId) {
+      console.error('Aluno ou curso não selecionado.');
+      return;
+    }
+
     try {
-      const response = await fetch(
-        'http://localhost:3000/api/aluno/matricular',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            alunoId,
-            cursoNome
-          })
-        }
-      );
+      const response = await fetch('http://localhost:3000/student/matricular', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          alunoId,
+          cursoId
+        })
+      });
 
       const result = await response.json();
       if (response.ok) {
@@ -64,13 +81,18 @@ const StudentCourseRegistration: React.FC = () => {
           </div>
           <div className="flex flex-col justify-center w-full">
             <div className="mb-4">
-              <input
-                type="text"
-                placeholder="Nome do Curso"
-                value={cursoNome}
-                onChange={handleCursoNomeChange}
+              <select
+                value={cursoId ?? ''}
+                onChange={handleCursoIdChange}
                 className="w-full py-2 px-3 mb-3 bg-gray-100 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-              />
+              >
+                <option value="">Selecione um curso</option>
+                {cursos.map((curso) => (
+                  <option key={curso.id} value={curso.id}>
+                    {curso.nome}
+                  </option>
+                ))}
+              </select>
             </div>
             <button
               onClick={handleMatricularClick}
