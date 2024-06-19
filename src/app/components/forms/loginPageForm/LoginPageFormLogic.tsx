@@ -64,12 +64,15 @@ const LoginPageLogic: React.FC = () => {
       if (!response.ok) {
         throw new Error(result.message);
       }
-      const isProfessor = handleToken(result.token);
-      console.log('Is Professor:', isProfessor);
-      if (isProfessor) {
-        router.push('/professorPage/professorArea');
-      } else {
+
+      localStorage.setItem('token', result.token);
+      localStorage.setItem('userId', result.id.toString());
+
+      const tipo = handleToken(result.token);
+      if (tipo === 'aluno') {
         router.push('/studentPage/studentArea');
+      } else {
+        router.push('/professorPage/professorArea');
       }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
